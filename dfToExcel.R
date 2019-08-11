@@ -1,0 +1,42 @@
+library(openxlsx)
+
+#======================================================================================
+#Exports dataframe to excel
+#======================================================================================
+dfToExcel<-function(df,FILE,SHEET="NewSheet",cell=c("A",1)){
+  out<-tryCatch({
+    wb<-loadWorkbook(paste0(ResultsFiles,FILE))
+    writeData(
+      wb=wb,
+      sheet=SHEET,
+      xy=cell,
+      x=df)
+    saveWorkbook(wb,paste0(ResultsFiles,FILE),overwrite=TRUE)
+  },
+  error=function(xyz){
+    out2<-tryCatch({
+      wb<-loadWorkbook(paste0(ResultsFiles,FILE))
+      addWorksheet(wb,SHEET)
+      writeData(
+        wb,
+        sheet=SHEET,
+        xy=cell,
+        df)
+      saveWorkbook(wb,paste0(ResultsFiles,FILE),overwrite=TRUE)        
+    },
+    error=function(abc){
+      wb<-createWorkbook(paste0(ResultsFiles,FILE))
+      addWorksheet(wb,SHEET)
+      writeData(
+        wb,
+        sheet=SHEET,
+        xy=cell,
+        x=df)
+      saveWorkbook(wb,paste0(ResultsFiles,FILE),overwrite=TRUE)
+    }
+    )
+    return(out2)
+  }
+  )
+  return(out)
+}
